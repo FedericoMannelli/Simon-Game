@@ -51,3 +51,21 @@ body {
   box-shadow: 0 0 20px white;
   background-color: grey;
 }
+
+/* Stile per il bottone "Start" */
+#start-button {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 1.5rem;
+  background-color: #FEF2BF;
+  color: #011F3F;
+  padding: 20px 30px;
+  border: 2px solid #FEF2BF;
+  border-radius: 10%;
+  cursor: pointer;
+}
+
+/* Stile per il bottone "Start" quando viene premuto */
+#start-button:active {
+  box-shadow: 0 0 10px white;
+  background-color: #FEF2BF;
+}

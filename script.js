@@ -1,110 +1,95 @@
-
 // Array contenente i colori dei bottoni possibili.
-let buttonColours = ["red", "blue", "green", "yellow"];
+var buttonColours = ["red", "blue", "green", "yellow"];
 
-// Dichiarazione di una variabile che conterrà il pattern del gioco.
-let gamePattern = [];
+// Variabile per contenere il pattern di gioco.
+var gamePattern = [];
 
+// Variabile per contenere i colori scelti dall'utente.
+var userClickedPattern = [];
 
-// Dichiarazione di un array vuoto che conterrà i colori scelti dall'utente.
-let userClickedPattern = [];
+// Variabile per tenere traccia dello stato del gioco (iniziato o no).
+var started = false;
 
-let level = 0;
+// Variabile per tenere traccia del livello corrente del gioco.
+var level = 0;
 
-$(document).keypress(function(){
+// Gestore dell'evento "click tap" per il bottone "Start".
+$("#start-button").on("click tap", function() {
   if (!started) {
-
-
-$("#level-title").text("Level " + level);
-nextSequence();
-started = true;
+    startGame();
   }
 });
 
-// Aggiungo un gestore di eventi al clic su tutti gli elementi con la classe ".btn".
-$(".btn").click(function() {
-  // Ottengo l'ID dell'elemento su cui è stato fatto clic e lo memorizza nella variabile "userChosenColour".
-  let userChosenColour = $(this).attr("id");
-  
-  // Aggiungo il colore scelto dall'utente all'array "userClickedPattern".
-  userClickedPattern.push(userChosenColour);
+// Funzione per avviare il gioco.
+function startGame() {
+  $("#level-title").text("Level " + level);
+  nextSequence();
+  started = true;
+}
 
-  playSound(userChosenColour);
-  animatePress(userChosenColour);
-  checkAnswer(userClickedPattern.length-1);
+// Gestore dell'evento "click tap" per i pulsanti colorati.
+$(".btn").on("click tap", function() {
+  if (started) {
+    var userChosenColour = $(this).attr("id");
+    userClickedPattern.push(userChosenColour);
+
+    playSound(userChosenColour);
+    animatePress(userChosenColour);
+    checkAnswer(userClickedPattern.length - 1);
+  }
 });
 
-function checkAnswer(currentLevel){
+// Funzione per verificare la risposta dell'utente.
+function checkAnswer(currentLevel) {
   if (gamePattern[currentLevel] === userClickedPattern[currentLevel]) {
-    console.log("sucess");
     if (userClickedPattern.length === gamePattern.length) {
       setTimeout(function() {
         nextSequence();
-    }, 1000);
+      }, 1000);
+    }
+  } else {
+    playSound("wrong");
+    $("body").addClass("game-over");
+    $("#level-title").text("Game Over, Press Start to Play");
+
+    setTimeout(function() {
+      $("body").removeClass("game-over");
+    }, 200);
+
+    startOver();
   }
-} else {
-  console.log("wrong");
-  playSound("wrong");
-  $("body").addClass("game-over");
-  setTimeout(function () {
-    $("body").removeClass("game-over");
-  }, 200);
-  $("#level-title").text("Game Over, Press Any Key to Restart");
-  startOver();
 }
-}
-// Funzione che genera il prossimo elemento del pattern di gioco.
+
+// Funzione per generare il prossimo elemento del pattern di gioco.
 function nextSequence() {
   userClickedPattern = [];
   level++;
-  $("#level-title").text("level " + level);
-  // Genera un numero casuale da 0 a 3.
-  let randomNumber = Math.floor(Math.random() * 4);
-
-  // Ottiene un colore casuale dal'array buttonColours utilizzando il numero casuale generato.
-  let randomChosenColour = buttonColours[randomNumber];
-
-  // Aggiunge il colore casuale al pattern di gioco.
+  $("#level-title").text("Level " + level);
+  var randomNumber = Math.floor(Math.random() * 4);
+  var randomChosenColour = buttonColours[randomNumber];
   gamePattern.push(randomChosenColour);
 
-
-
-
-// Effetto di fading-in e fading-out per il colore casuale selezionato.
-$("#" + randomChosenColour).fadeIn(100).fadeOut(100).fadeIn(100);
-playSound(randomChosenColour);
+  $("#" + randomChosenColour).fadeIn(100).fadeOut(100).fadeIn(100);
+  playSound(randomChosenColour);
 }
 
+// Funzione per riprodurre il suono associato al colore.
 function playSound(name) {
-
-
-// Creazione di un oggetto Audio per riprodurre il suono associato al colore casuale selezionato.
-var audio = new Audio("sounds/" + name + ".mp3");
-
-// Riproduzione del suono associato al colore casuale.
-audio.play(); 
+  var audio = new Audio("sounds/" + name + ".mp3");
+  audio.play();
 }
 
-// function animatePress(currentColor){
-//   $("#" + currentColor).addClass("pressed");
-//   setTimeout(function () {
-//     $("#" + currentColor).removeClass("pressed");
-//   }, 100);
-// }
-
+// Funzione per aggiungere l'effetto di pressione al pulsante.
 function animatePress(currentColor) {
-
-  //2. Use jQuery to add this pressed class to the button that gets clicked inside animatePress().
   $("#" + currentColor).addClass("pressed");
-
-  //3. use Google/Stackoverflow to figure out how you can use Javascript to remove the pressed class after a 100 milliseconds.
-  setTimeout(function () {
+  setTimeout(function() {
     $("#" + currentColor).removeClass("pressed");
   }, 100);
 }
 
+// Funzione per riavviare il gioco.
 function startOver() {
-  level = 0 
+  level = 0;
   gamePattern = [];
   started = false;
 }
